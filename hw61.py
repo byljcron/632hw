@@ -1,4 +1,7 @@
 import numpy as np
+import matplotlib.pyplot as plt
+
+
 def Rosenbrock(ap):
     return (1-ap[0])**2+100*(ap[1]-ap[0]**2)**2
 def sort():
@@ -62,17 +65,36 @@ def sd():
     SD= (SD2/3)**0.5
     return SD
 
+def drawgraph():
+    x = np.linspace(-1, 1.5, 256)
+    y = np.linspace(-1, 1.5, 256)
+    X,Y = np.meshgrid(x, y)
+    Z = Rosenbrock([X, Y])
+
+    fig, ax = plt.subplots()
+
+    cnt = plt.contour(X,Y,Z,8,   extent=[0, 1, 0, 1])
+    axes = plt.gca()
+    axes.set_xlim([-1,1.5])
+    axes.set_ylim([-1,1.5])
+    plt.plot([P[0][0],P[1][0]], [P[0][1],P[1][1]],linewidth=1, linestyle='-',marker="o")
+    plt.plot([P[2][0],P[1][0]], [P[2][1],P[1][1]],linewidth=1, linestyle='-',marker="o")
+    plt.plot([P[0][0],P[2][0]], [P[0][1],P[2][1]],linewidth=1, linestyle='-',marker="o")
+    plt.show()
 
 
 def NMmethod(maxiteration):
+    global P
     for i in range(0,maxiteration):
+        print(P[0],P[1],"f(x1):",Rosenbrock(P[0]),"f(x2):",Rosenbrock(P[1]),"f(x3):",Rosenbrock(P[2]))
+        drawgraph()
         oldp=P.copy()
         if sd() <1e-3 : return
         sort()
         x0=findx0()
         if not ReflectionExpansionandContraction(x0) : continue
         shrink()
-        if np.array_equal(oldp,P):return
+        if np.array_equal([oldp[0],oldp[1]],[P[0],P[1]]):return
 
 a=0.9
 r=2
